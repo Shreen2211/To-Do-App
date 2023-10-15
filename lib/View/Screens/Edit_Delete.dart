@@ -5,19 +5,18 @@ import 'package:untitled/ViewModel/bloc/Cubit/todoCubit.dart';
 
 import '../Componant/AddTaskScreen/formFielsCustom.dart';
 
-class AddToDo extends StatelessWidget {
-  const AddToDo({super.key});
+class EditAndDelete extends StatelessWidget {
+  const EditAndDelete({super.key});
 
   @override
   Widget build(BuildContext context) {
     var cubit = ToDoCubit.get(context);
-    cubit.clear();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purpleAccent,
         title: const Center(
             child: Text(
-          'Add Task',
+          'Edit Task',
           style: TextStyle(
             fontSize: 20,
           ),
@@ -51,12 +50,14 @@ class AddToDo extends StatelessWidget {
                     formFieldCustom(
                         onTap: () {
                           showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000, 1, 1),
-                              lastDate:DateTime.now().add(const Duration(days: 365*5)),).then((value){
-                            if(value!=null){
-                              cubit.startDateController?.text=DateFormat("yyyy/MM/dd").format(value);
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000, 1, 1),
+                            lastDate: DateTime.now(),
+                          ).then((value) {
+                            if (value != null) {
+                              cubit.startDateController?.text =
+                                  DateFormat("yyyy/MM/dd").format(value);
                             }
                           });
                         },
@@ -71,14 +72,16 @@ class AddToDo extends StatelessWidget {
                     formFieldCustom(
                         onTap: () {
                           showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000, 1, 1),
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 365 * 5))).then((value){
-                                    if(value!=null){
-                                      cubit.endDateController?.text=DateFormat("yyyy/MM/dd").format(value);
-                                    }
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000, 1, 1),
+                                  lastDate: DateTime.now()
+                                      .add(const Duration(days: 365 * 5)))
+                              .then((value) {
+                            if (value != null) {
+                              cubit.endDateController?.text =
+                                  DateFormat("yyyy/MM/dd").format(value);
+                            }
                           });
                         },
                         readOnly: true,
@@ -94,13 +97,24 @@ class AddToDo extends StatelessWidget {
               ),
             ),
           ),
-          buttomCustom(onPressed: (){
-            if(cubit.form.currentState!.validate())
-              {
-                cubit.addTask();
-              }
-          },
-              buttomName: 'Add Task'),
+          Row(
+            children: [
+              Expanded(
+                  flex: 2,
+                  child: buttomCustom(
+                      onPressed: () {
+                        cubit.EditTask();
+                      },
+                      buttomName: 'Edit Task')),
+              Expanded(
+                  flex: 1,
+                  child: buttomCustom(
+                      onPressed: () {
+                        cubit.DeleteTask();
+                      },
+                      buttomName: 'Delete')),
+            ],
+          ),
         ],
       ),
     );

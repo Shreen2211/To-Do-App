@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:untitled/Model/toDoList/dataItem.dart';
+import 'package:untitled/ViewModel/bloc/Cubit/counter_state.dart';
+import 'package:untitled/ViewModel/bloc/Cubit/todoCubit.dart';
 
 import '../../ViewModel/Utils/Navgation.dart';
 import '../Componant/homeWidget/toDoItem.dart';
+import 'Edit_Delete.dart';
 import 'addTodoScreen.dart';
 
 class HomeScreenTodoApp extends StatelessWidget {
@@ -28,20 +33,36 @@ class HomeScreenTodoApp extends StatelessWidget {
           Icon(Icons.input),
         ],
       ),
-      body: ListView.separated(
-          itemBuilder: (context, index) {
-            return ToDoItem(
-              todo: data(),
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const SizedBox(
-              height: 10.0,
-            );
-          },
-          itemCount: 5),
+      body: BlocConsumer<ToDoCubit, counterStates>(
+        builder: (context, state) {
+          var cubit = ToDoCubit.get(context);
+          return Visibility(
+            visible: cubit.newlist.isNotEmpty,
+            child: ListView.separated(
+                itemBuilder: (context, index) {
+                  return ToDoItem(
+                    todo: cubit.newlist[index],
+                    onTap: () {
+                      cubit.setData(index);
+                      Navgation.push(context, EditAndDelete());
+                    },
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(
+                    height: 10.0,
+                  );
+                },
+                itemCount: cubit.newlist.length),
+               replacement: Center(
+                 child: Lottie.network('https://lottie.host/e1ffe76f-d4cd-48d3-8d19-5ae124e96a04/hzacnXyAAY.json')  ,
+               ),
+          );
+        },
+        listener: (context, state) {},
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           Navgation.push(context, AddToDo());
         },
         backgroundColor: Colors.purpleAccent,
